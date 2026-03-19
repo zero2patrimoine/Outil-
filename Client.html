@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnostic Financier — Zero to Patrimoine</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:     #EDEAE6;
+    --white:  #FAF9F7;
+    --black:  #141414;
+    --muted:  #9A9A9A;
+    --line:   #E0DDD8;
+    --soft:   #3D3D3D;
+    --accent: #2A6B4F;
+    --accent2:#52B788;
+    --warn:   #9B7B2B;
+    --danger: #C0392B;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app-header {
+    width: 100%;
+    background: var(--black);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    position: relative;
+  }
+
+  .app-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .header-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 14px;
+    color: var(--white);
+  }
+
+  .header-brand em { font-style: italic; color: var(--accent2); }
+
+  .header-step {
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .progress-wrap {
+    width: 100%;
+    background: rgba(0,0,0,0.08);
+    height: 3px;
+    position: sticky;
+    top: 56px;
+    z-index: 99;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+    padding: 32px 16px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* ══ STEP CARDS ══ */
+  .step-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    overflow: hidden;
+    display: none;
+  }
+
+  .step-card.active { display: flex; flex-direction: column; }
+
+  .step-card-header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .step-eyebrow {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .step-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--black);
+    line-height: 1.1;
+    letter-spacing: -0.3px;
+  }
+
+  .step-title em { font-style: italic; color: var(--accent); }
+
+  .step-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  /* ══ INPUTS ══ */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  .field label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .field input, .field select {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--black);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .field input:focus, .field select:focus {
+    border-color: var(--accent);
+    background: var(--white);
+  }
+
+  .field-hint {
+    font-size: 9px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .field-prefix { position: relative; }
+  .field-prefix input { padding-left: 30px; }
+  .field-prefix::before {
+    content: '€';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* ══ RÉSULTATS INLINE ══ */
+  .calc-result {
+    background: rgba(42,107,79,0.07);
+    border: 1px solid rgba(42,107,79,0.18);
+    border-radius: 4px;
+    padding: 12px 14px;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .calc-result.visible { display: flex; }
+
+  .calc-result-label {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .calc-result-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--black);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+
+  .calc-result-sub {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .calc-result.warn { background: rgba(155,123,43,0.07); border-color: rgba(155,123,43,0.20); }
+  .calc-result.warn .calc-result-label { color: var(--warn); }
+  .calc-result.warn .calc-result-val { color: var(--warn); }
+
+  .calc-result.danger { background: rgba(192,57,43,0.06); border-color: rgba(192,57,43,0.18); }
+  .calc-result.danger .calc-result-label { color: var(--danger); }
+  .calc-result.danger .calc-result-val { color: var(--danger); }
+
+  /* ══ BOUTONS ══ */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    padding: 16px 20px;
+    border-top: 1px solid var(--line);
+  }
+
+  .btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.2s;
+  }
+
+  .btn:active { opacity: 0.8; }
+  .btn-primary { background: var(--black); color: var(--white); }
+  .btn-secondary { background: var(--bg); color: var(--soft); border: 1px solid var(--line); flex: 0.5; }
+  .btn-accent { background: var(--accent); color: var(--white); }
+
+  /* ══ SCORE SANTÉ ══ */
+  .score-block {
+    background: var(--black);
+    border-radius: 4px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .score-block::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .score-circle {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.10);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .score-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .score-right { display: flex; flex-direction: column; gap: 4px; }
+
+  .score-label {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .score-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--white);
+    line-height: 1.1;
+  }
+
+  .score-title em { font-style: italic; }
+
+  .score-sub {
+    font-size: 10px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.40);
+    line-height: 1.5;
+    margin-top: 2px;
+  }
+
+  /* ══ DASHBOARD ══ */
+  #dashboard {
+    display: none;
+    width: 100%;
+    max-width: 480px;
+    padding: 24px 16px 80px;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  #dashboard.visible { display: flex; }
+
+  .dash-header {
+    background: var(--black);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dash-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .dash-eyebrow {
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .dash-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--white);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .dash-name em { font-style: italic; color: var(--accent2); }
+
+  .dash-date {
+    font-size: 9px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 6px;
+    letter-spacing: 1px;
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .dash-stat {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .dash-stat.full { grid-column: 1 / -1; }
+
+  .dash-stat-label {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .dash-stat-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--black);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+
+  .dash-stat-val.good { color: var(--accent); }
+  .dash-stat-val.warn { color: var(--warn); }
+  .dash-stat-val.danger { color: var(--danger); }
+
+  .dash-stat-sub {
+    font-size: 9px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .dash-bar-wrap {
+    background: var(--bg);
+    border-radius: 3px;
+    height: 6px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .dash-bar {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent);
+    transition: width 1s ease;
+  }
+
+  .dash-section-title {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 4px 0;
+  }
+
+  /* ══ RÉPARTITION PATRIMOINE ══ */
+  .patrimoine-block {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pat-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .pat-label {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--muted);
+    width: 100px;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+  }
+
+  .pat-bar-wrap {
+    flex: 1;
+    height: 20px;
+    background: var(--bg);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .pat-bar {
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    min-width: 20px;
+  }
+
+  .pat-bar span {
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+  }
+
+  .pat-val {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--black);
+    width: 56px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ══ RECOMMANDATIONS ══ */
+  .reco-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .reco-num {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 12px;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+
+  .reco-num.urgent { background: var(--danger); }
+
+  .reco-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--black);
+    line-height: 1.3;
+  }
+
+  .reco-sub {
+    font-size: 10px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-top: 3px;
+  }
+
+  .reco-card.priority {
+    border-color: rgba(42,107,79,0.25);
+    background: rgba(42,107,79,0.04);
+  }
+
+  .reco-card.urgent-card {
+    border-color: rgba(192,57,43,0.25);
+    background: rgba(192,57,43,0.03);
+  }
+
+  /* ══ PROJECTION ══ */
+  .projection-block {
+    background: var(--black);
+    border-radius: 4px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .projection-title {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+
+  .projection-rows { display: flex; flex-direction: column; gap: 8px; }
+
+  .projection-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .proj-year {
+    font-size: 9px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.35);
+    width: 36px;
+    flex-shrink: 0;
+    letter-spacing: 0.5px;
+  }
+
+  .proj-bar-wrap {
+    flex: 1;
+    height: 22px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .proj-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+    min-width: 48px;
+  }
+
+  .proj-bar span {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--white);
+    white-space: nowrap;
+  }
+
+  .dash-disclaimer {
+    font-size: 8px;
+    color: var(--muted);
+    line-height: 1.6;
+    text-align: center;
+    padding: 0 4px;
+  }
+
+  .dash-brand {
+    font-family: 'DM Serif Display', serif;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .dash-brand em { font-style: italic; color: var(--accent); }
+
+  .btn-restart {
+    width: 100%;
+    padding: 14px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    text-align: center;
+  }
+
+  /* ══ MODAL CONFIRMATION ══ */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    padding: 24px;
+  }
+
+  .modal-overlay.visible { display: flex; }
+
+  .modal {
+    background: var(--white);
+    border-radius: 4px;
+    padding: 24px;
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--black);
+  }
+
+  .modal-sub {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: -8px;
+  }
+
+  .modal-btns { display: flex; gap: 10px; }
+
+  .modal-btns .btn { font-size: 11px; padding: 11px; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="header-brand">Zero <em>to</em> Patrimoine</div>
+  <div class="header-step" id="headerStep">Diagnostic financier</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-bar" id="progressBar" style="width:0%"></div>
+</div>
+
+
+<!-- ══ ÉCRAN D'ACCUEIL CLIENT ══ -->
+<div id="welcomeScreen" style="width:100%;max-width:480px;padding:32px 16px 80px;display:flex;flex-direction:column;gap:20px;">
+
+  <!-- Header card -->
+  <div style="background:var(--black);border-radius:4px;padding:28px 24px;position:relative;overflow:hidden;">
+    <div style="position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--accent);"></div>
+    <div style="font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Zero to Patrimoine</div>
+    <div style="font-family:'DM Serif Display',serif;font-size:26px;color:#FAF9F7;line-height:1.1;letter-spacing:-0.5px;">Votre diagnostic<br>financier <em style="font-style:italic;color:#52B788;">personnalisé</em></div>
+    <div style="font-size:11px;font-weight:300;color:rgba(255,255,255,0.40);line-height:1.6;margin-top:10px;">Préparé par Enzo · @zero2patrimoine</div>
+  </div>
+
+  <!-- Présentation de l'outil -->
+  <div style="background:#FAF9F7;border:1px solid #E0DDD8;border-radius:4px;padding:20px;">
+    <div style="font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Pourquoi cet outil ?</div>
+    <div style="font-size:12px;font-weight:300;color:#3D3D3D;line-height:1.8;">
+      Ce diagnostic a été créé pour vous donner une vision claire et honnête de votre situation financière.<br><br>
+      En 6 étapes simples, vous allez renseigner vos revenus, charges, épargne, dettes et objectifs.<br><br>
+      À la fin, un <strong>tableau de bord personnalisé</strong> sera généré avec votre score de santé financière, la répartition de votre patrimoine et un plan d'action concret adapté à votre profil.
+    </div>
+  </div>
+
+  <!-- Ce que vous allez renseigner -->
+  <div style="background:#FAF9F7;border:1px solid #E0DDD8;border-radius:4px;padding:20px;display:flex;flex-direction:column;gap:12px;">
+    <div style="font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--muted);">Les 6 étapes</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#3D3D3D;">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:11px;color:#FAF9F7;flex-shrink:0;">1</div>
+        <span>Votre profil — âge, statut, revenu net</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#3D3D3D;">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:11px;color:#FAF9F7;flex-shrink:0;">2</div>
+        <span>Vos charges fixes mensuelles</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#3D3D3D;">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:11px;color:#FAF9F7;flex-shrink:0;">3</div>
+        <span>Votre épargne actuelle — livrets, PEA, assurance-vie</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#3D3D3D;">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:11px;color:#FAF9F7;flex-shrink:0;">4</div>
+        <span>Vos dettes et crédits en cours</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#3D3D3D;">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:11px;color:#FAF9F7;flex-shrink:0;">5</div>
+        <span>Vos objectifs financiers et horizon</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-size:11px;color:#3D3D3D;">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:11px;color:#FAF9F7;flex-shrink:0;">6</div>
+        <span>Vérification et génération du dashboard</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confidentialité -->
+  <div style="background:rgba(42,107,79,0.06);border:1px solid rgba(42,107,79,0.18);border-radius:4px;padding:14px 16px;">
+    <div style="font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Confidentialité</div>
+    <div style="font-size:10px;font-weight:300;color:#3D3D3D;line-height:1.6;">Toutes vos données restent sur votre appareil. Aucune information n'est transmise à un serveur. Ce fichier fonctionne entièrement hors ligne.</div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div style="font-size:9px;color:var(--muted);line-height:1.6;text-align:center;padding:0 8px;">
+    ⚠️ Ce diagnostic est éducatif et indicatif. Il ne constitue pas un conseil en investissement personnalisé. Non certifié AMF.
+  </div>
+
+  <!-- CTA -->
+  <button onclick="startDiag()" style="width:100%;padding:16px;background:var(--black);color:#FAF9F7;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;border:none;border-radius:4px;cursor:pointer;letter-spacing:0.5px;">Commencer le diagnostic →</button>
+
+</div>
+
+<!-- ══════════════════════════════
+     FORMULAIRE
+══════════════════════════════ -->
+<div class="container" id="stepsContainer" style="display:none;">
+
+  <!-- STEP 1 — Profil -->
+  <div class="step-card active" id="step1">
+    <div class="step-card-header">
+      <div class="step-eyebrow">Étape 1 / 5</div>
+      <div class="step-title">Votre <em>profil</em></div>
+    </div>
+    <div class="step-body">
+      <div class="field">
+        <label>Prénom du client</label>
+        <input type="text" id="clientName" placeholder="ex. Marie" autocomplete="off"/>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Âge</label>
+          <input type="number" id="clientAge" placeholder="28" min="18" max="70"/>
+        </div>
+        <div class="field">
+          <label>Situation</label>
+          <select id="clientStatus">
+            <option value="">—</option>
+            <option value="salarie">Salarié(e)</option>
+            <option value="etudiant">Étudiant(e)</option>
+            <option value="etudiant-job">Étudiant(e) avec job étudiant</option>
+            <option value="independant">Indépendant(e)</option>
+            <option value="les-deux">Les deux</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Revenu net mensuel</label>
+        <div class="field-prefix">
+          <input type="number" id="clientRevenu" placeholder="2 200" min="0"/>
+        </div>
+        <div class="field-hint" id="revenuHint">Montant net disponible après impôts et cotisations.</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="nextStep(1)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 — Charges -->
+  <div class="step-card" id="step2">
+    <div class="step-card-header">
+      <div class="step-eyebrow">Étape 2 / 5</div>
+      <div class="step-title">Vos <em>charges fixes</em></div>
+    </div>
+    <div class="step-body">
+      <div class="field-hint" style="color:var(--accent);font-weight:500;">Charges incompressibles uniquement — loyer, prêt, abonnements contractuels, assurances. Ne pas inclure l'alimentation ni les loisirs.</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Loyer / Prêt immo</label>
+          <div class="field-prefix"><input type="number" id="chargeLoyer" placeholder="900" min="0"/></div>
+        </div>
+        <div class="field">
+          <label>Transport fixe</label>
+          <div class="field-prefix"><input type="number" id="chargeTransport" placeholder="150" min="0"/></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Abonnements</label>
+          <div class="field-prefix"><input type="number" id="chargeAbos" placeholder="80" min="0"/></div>
+        </div>
+        <div class="field">
+          <label>Mutuelle / Assurances</label>
+          <div class="field-prefix"><input type="number" id="chargeMutuelle" placeholder="60" min="0"/></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Autres charges fixes contractuelles</label>
+        <div class="field-prefix"><input type="number" id="chargeAutres" placeholder="0" min="0"/></div>
+      </div>
+      <div class="field">
+        <label>Dépenses courantes estimées (alimentation, sorties…)</label>
+        <div class="field-prefix"><input type="number" id="chargeVie" placeholder="600" min="0"/></div>
+        <div class="field-hint">Utilisé pour calculer votre reste à vivre — pas inclus dans le matelas de précaution.</div>
+      </div>
+      <div class="calc-result" id="resultCharges">
+        <div class="calc-result-label">Total charges fixes</div>
+        <div class="calc-result-val" id="totalCharges">—</div>
+        <div class="calc-result-sub" id="ratioCharges">—</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevStep(2)">←</button>
+      <button class="btn btn-primary" onclick="nextStep(2)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 — Épargne actuelle -->
+  <div class="step-card" id="step3">
+    <div class="step-card-header">
+      <div class="step-eyebrow">Étape 3 / 5</div>
+      <div class="step-title">Votre <em>épargne actuelle</em></div>
+    </div>
+    <div class="step-body">
+      <div class="field-hint" style="font-weight:500;color:var(--accent);">Épargne sécurisée — livrets réglementés</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Livret A / LDDS</label>
+          <div class="field-prefix"><input type="number" id="epargneLivret" placeholder="5 000" min="0"/></div>
+        </div>
+        <div class="field">
+          <label>LEP</label>
+          <div class="field-prefix"><input type="number" id="epargneLep" placeholder="0" min="0"/></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Compte courant (solde habituel)</label>
+        <div class="field-prefix"><input type="number" id="epargneCC" placeholder="2 000" min="0"/></div>
+        <div class="field-hint">Le surplus au-delà de 1,5 mois de charges est du capital dormant à réorienter.</div>
+      </div>
+      <div class="field-hint" style="font-weight:500;color:var(--accent);margin-top:4px;">Épargne investie — supports de marché</div>
+      <div class="field-row">
+        <div class="field">
+          <label>PEA / CTO (bourse)</label>
+          <div class="field-prefix"><input type="number" id="epargnePEA" placeholder="0" min="0"/></div>
+        </div>
+        <div class="field">
+          <label>Assurance-vie UC</label>
+          <div class="field-prefix"><input type="number" id="epargneAVUC" placeholder="0" min="0"/></div>
+        </div>
+      </div>
+      <div class="field-hint" style="font-weight:500;color:var(--warn);margin-top:4px;">Épargne placée sécurisée — fonds euros</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Assurance-vie fonds euros</label>
+          <div class="field-prefix"><input type="number" id="epargneAVEuros" placeholder="0" min="0"/></div>
+        </div>
+        <div class="field">
+          <label>PEL / Autres</label>
+          <div class="field-prefix"><input type="number" id="epargneAutres" placeholder="0" min="0"/></div>
+        </div>
+      </div>
+      <div class="calc-result" id="resultEpargne">
+        <div class="calc-result-label">Patrimoine financier total</div>
+        <div class="calc-result-val" id="totalEpargne">—</div>
+        <div class="calc-result-sub" id="diagEpargne">—</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevStep(3)">←</button>
+      <button class="btn btn-primary" onclick="nextStep(3)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 — Dettes & crédits -->
+  <div class="step-card" id="step4">
+    <div class="step-card-header">
+      <div class="step-eyebrow">Étape 4 / 6</div>
+      <div class="step-title">Vos <em>dettes</em><br>& crédits</div>
+    </div>
+    <div class="step-body">
+      <div class="field-hint" style="font-weight:500;color:var(--accent);">Renseigner 0 si vous n'avez pas de dette. Cette étape est essentielle — une dette à taux élevé peut rendre l'investissement contre-productif.</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Crédit conso / perso</label>
+          <div class="field-prefix"><input type="number" id="detteConsoCap" placeholder="0" min="0"/></div>
+          <div class="field-hint">Capital restant dû</div>
+        </div>
+        <div class="field">
+          <label>Taux annuel (%)</label>
+          <input type="number" id="detteConsoTaux" placeholder="ex. 5,5" min="0" max="30" step="0.1" style="padding:12px 14px;"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Prêt étudiant</label>
+          <div class="field-prefix"><input type="number" id="detteEtudiantCap" placeholder="0" min="0"/></div>
+        </div>
+        <div class="field">
+          <label>Taux annuel (%)</label>
+          <input type="number" id="detteEtudiantTaux" placeholder="ex. 1,5" min="0" max="30" step="0.1" style="padding:12px 14px;"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Découvert habituel</label>
+          <div class="field-prefix"><input type="number" id="detteDecouvert" placeholder="0" min="0"/></div>
+          <div class="field-hint">Montant moyen en négatif</div>
+        </div>
+        <div class="field">
+          <label>Autre dette</label>
+          <div class="field-prefix"><input type="number" id="detteAutreCap" placeholder="0" min="0"/></div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Mensualité totale des crédits</label>
+          <div class="field-prefix"><input type="number" id="detteMensualite" placeholder="0" min="0"/></div>
+          <div class="field-hint">Total remboursé chaque mois</div>
+        </div>
+        <div class="field">
+          <label>Taux autre dette (%)</label>
+          <input type="number" id="detteAutreTaux" placeholder="0" min="0" max="30" step="0.1" style="padding:12px 14px;"/>
+        </div>
+      </div>
+      <div class="calc-result" id="resultDettes">
+        <div class="calc-result-label">Diagnostic dettes</div>
+        <div class="calc-result-val" id="totalDettes">—</div>
+        <div class="calc-result-sub" id="diagDettes">—</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevStep(4)">←</button>
+      <button class="btn btn-primary" onclick="nextStep(4)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5 — Objectifs -->
+  <div class="step-card" id="step5">
+    <div class="step-card-header">
+      <div class="step-eyebrow">Étape 5 / 6</div>
+      <div class="step-title">Vos <em>objectifs</em></div>
+    </div>
+    <div class="step-body">
+      <div class="field">
+        <label>Objectif principal</label>
+        <select id="objectifPrincipal">
+          <option value="">—</option>
+          <option value="patrimoine">Construire un patrimoine long terme</option>
+          <option value="immo">Préparer un achat immobilier</option>
+          <option value="retraite">Préparer la retraite</option>
+          <option value="liberte">Atteindre la liberté financière</option>
+          <option value="securite">Sécuriser mon épargne existante</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Horizon d'investissement</label>
+        <select id="horizon">
+          <option value="">—</option>
+          <option value="court">Court terme (1 à 3 ans)</option>
+          <option value="moyen">Moyen terme (3 à 7 ans)</option>
+          <option value="long">Long terme (7 ans et plus)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Tolérance au risque</label>
+        <select id="risque">
+          <option value="">—</option>
+          <option value="faible">Faible — je préfère la sécurité</option>
+          <option value="moyen">Modéré — je tolère quelques fluctuations</option>
+          <option value="eleve">Élevé — je vise la performance long terme</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Capacité d'investissement mensuelle souhaitée</label>
+        <div class="field-prefix"><input type="number" id="investMensuel" placeholder="200" min="0"/></div>
+        <div class="field-hint" id="investHint">Calculée automatiquement à 15% du revenu net — ajustable.</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevStep(5)">←</button>
+      <button class="btn btn-primary" onclick="nextStep(5)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- STEP 6 — Résumé -->
+  <div class="step-card" id="step6">
+    <div class="step-card-header">
+      <div class="step-eyebrow">Étape 6 / 6</div>
+      <div class="step-title">Vérification<br><em>avant génération</em></div>
+    </div>
+    <div class="step-body">
+      <div class="calc-result visible" id="resumeBlock" style="gap:10px;">
+        <div class="calc-result-label">Résumé de la situation</div>
+        <div id="resumeContent" style="font-size:11px;color:var(--soft);line-height:1.9;font-weight:300;"></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="prevStep(6)">←</button>
+      <button class="btn btn-accent" onclick="generateDashboard()">Générer le Dashboard →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     DASHBOARD
+══════════════════════════════ -->
+<div id="dashboard">
+
+  <div class="dash-header">
+    <div class="dash-eyebrow">Diagnostic financier personnalisé</div>
+    <div class="dash-name" id="dashName">—</div>
+    <div class="dash-date" id="dashDate">—</div>
+  </div>
+
+  <!-- Score santé financière -->
+  <div class="dash-section-title">Score de santé financière</div>
+  <div class="score-block" id="scoreBlock">
+    <div class="score-circle" id="scoreCircle">
+      <div class="score-val" id="scoreVal">—</div>
+    </div>
+    <div class="score-right">
+      <div class="score-label">Score global</div>
+      <div class="score-title" id="scoreTitle">—</div>
+      <div class="score-sub" id="scoreSub">—</div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="dash-section-title">Situation actuelle</div>
+  <div class="dash-grid" id="dashGrid"></div>
+
+  <!-- Répartition patrimoine -->
+  <div class="dash-section-title">Répartition du patrimoine</div>
+  <div class="patrimoine-block" id="dashPatrimoine"></div>
+
+  <!-- Précaution -->
+  <div class="dash-section-title">Matelas de précaution</div>
+  <div class="dash-stat">
+    <div class="dash-stat-label">Cible — charges fixes uniquement × 3 mois</div>
+    <div class="dash-stat-val good" id="dashPrecaution">—</div>
+    <div class="dash-stat-sub" id="dashPrecautionSub">—</div>
+    <div class="dash-bar-wrap"><div class="dash-bar" id="dashPrecautionBar" style="width:0%"></div></div>
+  </div>
+
+  <!-- Dettes -->
+  <div class="dash-section-title" id="dashDettesTitre" style="display:none">Situation des dettes</div>
+  <div id="dashDettes"></div>
+
+  <!-- Plan d'action -->
+  <div class="dash-section-title">Plan d'action personnalisé</div>
+  <div id="dashRecos"></div>
+
+  <!-- Projection -->
+  <div class="dash-section-title">Projection patrimoniale</div>
+  <div class="projection-block" id="dashProjection"></div>
+
+  <div class="dash-brand">Zero <em>to</em> Patrimoine — @zero2patrimoine</div>
+  <div class="dash-disclaimer">⚠️ Ce diagnostic est éducatif et indicatif. Il ne constitue pas un conseil en investissement personnalisé. Non certifié AMF. Consultez un professionnel agréé avant toute décision financière.</div>
+
+  <!-- Boutons actions -->
+  <button class="btn btn-accent" onclick="printDashboard()" style="width:100%;padding:14px;font-size:12px;font-weight:600;border-radius:4px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;">⬇ Enregistrer en PDF</button>
+  <button class="btn-restart" onclick="confirmRestart()">↺ Nouveau diagnostic</button>
+
+</div>
+
+<!-- Modal confirmation reset -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">Nouveau diagnostic ?</div>
+    <div class="modal-sub">Toutes les données saisies seront effacées. Cette action est irréversible.</div>
+    <div class="modal-btns">
+      <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="restartDiag()">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  var currentStep = 1;
+  var totalSteps = 6;
+
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    if (from < totalSteps) {
+      document.getElementById('step' + from).classList.remove('active');
+      currentStep = from + 1;
+      document.getElementById('step' + currentStep).classList.add('active');
+      updateProgress();
+      if (currentStep === 5) prefillInvest();
+      if (currentStep === 6) buildResume();
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function prevStep(from) {
+    document.getElementById('step' + from).classList.remove('active');
+    currentStep = from - 1;
+    document.getElementById('step' + currentStep).classList.add('active');
+    updateProgress();
+    window.scrollTo(0, 0);
+  }
+
+  function updateProgress() {
+    var pct = ((currentStep - 1) / totalSteps) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('headerStep').textContent = 'Étape ' + currentStep + ' / ' + totalSteps;
+  }
+
+  function validateStep(step) {
+    if (step === 1) {
+      var name = document.getElementById('clientName').value.trim();
+      var revenu = parseFloat(document.getElementById('clientRevenu').value);
+      if (!name || !revenu || revenu <= 0) {
+        alert('Veuillez renseigner le prénom et le revenu net mensuel.');
+        return false;
+      }
+      var status = document.getElementById('clientStatus').value;
+      if (status === 'independant' || status === 'les-deux') {
+        document.getElementById('revenuHint').textContent = 'Indépendant : moyenne mensuelle nette après toutes charges professionnelles.';
+      } else if (status === 'etudiant') {
+        document.getElementById('revenuHint').textContent = 'Étudiant : bourse + aides familiales + APL + tout revenu régulier mensuel.';
+      } else if (status === 'etudiant-job') {
+        document.getElementById('revenuHint').textContent = 'Étudiant avec job : total mensuel net incluant salaire job étudiant, bourse et aides.';
+      }
+    }
+    if (step === 2) computeCharges();
+    if (step === 3) computeEpargne();
+    if (step === 4) computeDettes();
+    if (step === 5) {
+      var obj = document.getElementById('objectifPrincipal').value;
+      var hor = document.getElementById('horizon').value;
+      if (!obj || !hor) {
+        alert('Veuillez renseigner l\'objectif et l\'horizon d\'investissement.');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+
+  function getChargesFixes() {
+    return getVal('chargeLoyer') + getVal('chargeTransport') +
+           getVal('chargeAbos') + getVal('chargeMutuelle') + getVal('chargeAutres');
+  }
+
+  function getTotalDepenses() { return getChargesFixes() + getVal('chargeVie'); }
+
+  function getEpargneSure()    { return getVal('epargneLivret') + getVal('epargneLep'); }
+  function getEpargneInvestie(){ return getVal('epargnePEA') + getVal('epargneAVUC'); }
+  function getEpargnePlacee()  { return getVal('epargneAVEuros') + getVal('epargneAutres'); }
+  function getTotalPatrimoine(){ return getEpargneSure() + getVal('epargneCC') + getEpargneInvestie() + getEpargnePlacee(); }
+
+  function getTotalDettes() {
+    return getVal('detteConsoCap') + getVal('detteEtudiantCap') + getVal('detteDecouvert') + getVal('detteAutreCap');
+  }
+  function getDettesMensualite() { return getVal('detteMensualite'); }
+
+  function getTauxMoyenDettes() {
+    var cCap = getVal('detteConsoCap'), cTaux = getVal('detteConsoTaux');
+    var eCap = getVal('detteEtudiantCap'), eTaux = getVal('detteEtudiantTaux');
+    var aCap = getVal('detteAutreCap'), aTaux = getVal('detteAutreTaux');
+    var totalCap = cCap + eCap + aCap;
+    if (totalCap === 0) return 0;
+    return ((cCap * cTaux) + (eCap * eTaux) + (aCap * aTaux)) / totalCap;
+  }
+
+  function computeDettes() {
+    var total = getTotalDettes();
+    var mensualite = getDettesMensualite();
+    var tauxMoyen = getTauxMoyenDettes();
+    var el = document.getElementById('resultDettes');
+    var valEl = document.getElementById('totalDettes');
+    var subEl = document.getElementById('diagDettes');
+    el.classList.add('visible');
+    if (total === 0 && mensualite === 0) {
+      el.className = 'calc-result visible';
+      valEl.textContent = 'Aucune dette';
+      subEl.textContent = 'Situation nette — vous pouvez investir librement.';
+      return;
+    }
+    valEl.textContent = formatEur(total) + ' de dettes' + (mensualite > 0 ? ' · ' + formatEur(mensualite) + '/mois' : '');
+    if (tauxMoyen > 5) {
+      el.className = 'calc-result visible danger';
+      subEl.textContent = 'Taux moyen ' + tauxMoyen.toFixed(1) + '% — PRIORITÉ : rembourser avant d\'investir. Tout rendement boursier sera absorbé par les intérêts.';
+    } else if (tauxMoyen > 2) {
+      el.className = 'calc-result visible warn';
+      subEl.textContent = 'Taux moyen ' + tauxMoyen.toFixed(1) + '% — arbitrage à étudier entre remboursement accéléré et investissement progressif.';
+    } else if (total > 0) {
+      el.className = 'calc-result visible';
+      subEl.textContent = 'Taux faible (' + tauxMoyen.toFixed(1) + '%) — investissement en parallèle du remboursement envisageable.';
+    } else {
+      el.className = 'calc-result visible warn';
+      subEl.textContent = 'Découvert habituel détecté — à éliminer avant tout investissement.';
+    }
+  }
+
+  function computeCharges() {
+    var revenu = getVal('clientRevenu');
+    var statusEl = document.getElementById('clientStatus');
+    var status = statusEl ? statusEl.value : '';
+    var isEtudiant = (status === 'etudiant' || status === 'etudiant-job');
+    var fixes = getChargesFixes();
+    var total = getTotalDepenses();
+    if (fixes === 0 && total === 0) return;
+    var ratioFixes = revenu > 0 ? Math.round((fixes / revenu) * 100) : 0;
+    var el = document.getElementById('resultCharges');
+    var valEl = document.getElementById('totalCharges');
+    var subEl = document.getElementById('ratioCharges');
+    el.classList.add('visible');
+    valEl.textContent = formatEur(fixes) + ' fixes · ' + formatEur(total) + ' total';
+    var seuilDanger = isEtudiant ? 80 : 65;
+    var seuilWarn   = isEtudiant ? 70 : 50;
+    if (ratioFixes > seuilDanger) {
+      el.className = 'calc-result visible danger';
+      subEl.textContent = ratioFixes + '% du revenu en charges fixes — très élevé. Audit nécessaire.';
+    } else if (ratioFixes > seuilWarn) {
+      el.className = 'calc-result visible warn';
+      subEl.textContent = ratioFixes + '% du revenu en charges fixes — au-dessus de la norme.';
+    } else {
+      el.className = 'calc-result visible';
+      subEl.textContent = ratioFixes + '% du revenu en charges fixes — ratio sain.';
+    }
+  }
+
+  function computeEpargne() {
+    var total = getTotalPatrimoine();
+    var fixes = getChargesFixes();
+    var precaution = fixes * 3;
+    var epSure = getEpargneSure();
+    var el = document.getElementById('resultEpargne');
+    el.classList.add('visible');
+    document.getElementById('totalEpargne').textContent = formatEur(total);
+    if (epSure >= precaution && precaution > 0) {
+      el.className = 'calc-result visible';
+      document.getElementById('diagEpargne').textContent = 'Matelas de précaution constitué — surplus disponible pour investissement.';
+    } else if (precaution > 0) {
+      el.className = 'calc-result visible warn';
+      document.getElementById('diagEpargne').textContent = 'Matelas incomplet — ' + formatEur(precaution - epSure) + ' à constituer sur livrets avant d\'investir.';
+    } else {
+      el.className = 'calc-result visible';
+      document.getElementById('diagEpargne').textContent = 'Renseignez les charges fixes à l\'étape 2 pour le diagnostic complet.';
+    }
+  }
+
+  function prefillInvest() {
+    var revenu = getVal('clientRevenu');
+    var statusEl = document.getElementById('clientStatus');
+    var status = statusEl ? statusEl.value : '';
+    var mensualites = getDettesMensualite();
+    var revenuNet = Math.max(0, revenu - mensualites);
+    var field = document.getElementById('investMensuel');
+    if (!field.value) {
+      var isEtudiant = (status === 'etudiant' || status === 'etudiant-job');
+      var pct  = isEtudiant ? 0.10 : 0.15;
+      var mini = isEtudiant ? 20  : 50;
+      var suggestion = Math.max(mini, Math.round(revenuNet * pct / 10) * 10);
+      field.value = suggestion;
+      var note = mensualites > 0 ? ' (après ' + formatEur(mensualites) + '/mois de remboursement)' : '';
+      document.getElementById('investHint').textContent =
+        'Suggestion : ' + (pct * 100) + '% du revenu net disponible' + note + ' = ' + formatEur(suggestion) + '/mois.';
+    }
+  }
+
+  function buildResume() {
+    var name   = document.getElementById('clientName').value;
+    var age    = getVal('clientAge');
+    var statusEl = document.getElementById('clientStatus');
+    var status = statusEl ? statusEl.selectedOptions[0].text : '—';
+    var revenu = getVal('clientRevenu');
+    var fixes  = getChargesFixes();
+    var vie    = getVal('chargeVie');
+    var dispo  = revenu - fixes - vie;
+    var invest = getVal('investMensuel');
+    var total  = getTotalPatrimoine();
+    var dettes = getTotalDettes();
+    var mensual = getDettesMensualite();
+    var objEl  = document.getElementById('objectifPrincipal');
+    var horEl  = document.getElementById('horizon');
+    var risqEl = document.getElementById('risque');
+    var obj  = objEl  ? objEl.selectedOptions[0].text  : '—';
+    var hor  = horEl  ? horEl.selectedOptions[0].text  : '—';
+    var risq = risqEl ? risqEl.selectedOptions[0].text : '—';
+
+    document.getElementById('resumeContent').innerHTML =
+      '<strong>' + name + '</strong>, ' + (age || '—') + ' ans · ' + status + '<br>' +
+      'Revenu net : <strong>' + formatEur(revenu) + '/mois</strong><br>' +
+      'Charges fixes : <strong>' + formatEur(fixes) + '/mois</strong><br>' +
+      'Dépenses courantes : <strong>' + formatEur(vie) + '/mois</strong><br>' +
+      'Reste disponible : <strong>' + formatEur(dispo) + '/mois</strong><br>' +
+      (dettes > 0 ? 'Total dettes : <strong>' + formatEur(dettes) + '</strong>' + (mensual > 0 ? ' · <strong>' + formatEur(mensual) + '/mois</strong>' : '') + '<br>' : '') +
+      'Investissement prévu : <strong>' + formatEur(invest) + '/mois</strong><br>' +
+      'Patrimoine actuel : <strong>' + formatEur(total) + '</strong><br>' +
+      'Objectif : <strong>' + obj + '</strong><br>' +
+      'Horizon : <strong>' + hor + '</strong> · Risque : <strong>' + risq + '</strong>';
+  }
+
+  function generateDashboard() {
+    document.getElementById('stepsContainer').style.display = 'none';
+    document.getElementById('dashboard').classList.add('visible');
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('headerStep').textContent = 'Dashboard';
+    window.scrollTo(0, 0);
+
+    var name     = document.getElementById('clientName').value;
+    var age      = getVal('clientAge');
+    var statusEl = document.getElementById('clientStatus');
+    var status   = statusEl ? statusEl.value : '';
+    var revenu   = getVal('clientRevenu');
+    var fixes    = getChargesFixes();
+    var vie      = getVal('chargeVie');
+    var depTotal = getTotalDepenses();
+    var dispo    = revenu - depTotal;
+    var invest   = getVal('investMensuel') || Math.max(50, Math.round(revenu * 0.15 / 50) * 50);
+    var lep      = getVal('epargneLep');
+    var cc       = getVal('epargneCC');
+    var pea      = getVal('epargnePEA');
+    var avEuros  = getVal('epargneAVEuros');
+    var epSure   = getEpargneSure();
+    var epInvest = getEpargneInvestie();
+    var epPlace  = getEpargnePlacee();
+    var totalEp  = getTotalPatrimoine();
+    var horizonEl  = document.getElementById('horizon');
+    var risqueEl   = document.getElementById('risque');
+    var objectifEl = document.getElementById('objectifPrincipal');
+    var horizonVal = horizonEl  ? horizonEl.value  : '';
+    var risqueVal  = risqueEl   ? risqueEl.value   : '';
+    var objectif   = objectifEl ? objectifEl.value : '';
+    var hasPEA       = pea > 0;
+    var ratioFixes   = revenu > 0 ? Math.round((fixes / revenu) * 100) : 0;
+    var ratioInvest  = revenu > 0 ? Math.round((invest / revenu) * 100) : 0;
+    var isEtudiant   = (status === 'etudiant' || status === 'etudiant-job');
+    var totalDettes  = getTotalDettes();
+    var detteMens    = getDettesMensualite();
+    var tauxDettes   = getTauxMoyenDettes();
+    var hasDetteElevee = (tauxDettes > 5 && totalDettes > 0);
+    var hasDecouverte  = getVal('detteDecouvert') > 0;
+    var precautionMini = isEtudiant ? fixes * 1 : fixes * 3;
+
+    document.getElementById('dashName').innerHTML = 'Diagnostic de <em>' + name + '</em>';
+    document.getElementById('dashDate').textContent = 'Généré le ' + new Date().toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'});
+
+    var score = computeScore(epSure, precautionMini, fixes, revenu, invest, hasPEA, horizonVal, dispo, status, ratioFixes);
+    renderScore(score);
+
+    var ratioColor  = ratioFixes  > (isEtudiant ? 70 : 65) ? 'danger' : ratioFixes  > (isEtudiant ? 55 : 50) ? 'warn' : 'good';
+    var investColor = ratioInvest >= (isEtudiant ? 10 : 15) ? 'good'  : ratioInvest >= (isEtudiant ?  5 :  8) ? 'warn' : 'danger';
+    var dispoColor  = dispo > 0 ? 'good' : 'danger';
+    document.getElementById('dashGrid').innerHTML =
+      statBox('Revenu net',      formatEur(revenu) + '/mois',            'Après impôts',          'good') +
+      statBox('Charges fixes',   formatEur(fixes)  + '/mois',            ratioFixes + '% du revenu', ratioColor) +
+      statBox('Reste disponible',formatEur(Math.max(0,dispo)) + '/mois', 'Après toutes dépenses', dispoColor) +
+      statBox('Investissement',  formatEur(invest) + '/mois',            ratioInvest + '% du revenu', investColor) +
+      statBox('Épargne sécurisée', formatEur(epSure),  'Livrets réglementés', epSure >= precautionMini ? 'good' : 'warn') +
+      statBox('Épargne investie',  formatEur(epInvest), hasPEA ? 'PEA ouvert' : 'PEA non ouvert', hasPEA ? 'good' : 'warn');
+
+    renderPatrimoine(epSure, epInvest, epPlace, cc, totalEp);
+
+    var precaution3 = fixes * 3;
+    var precaution6 = fixes * 6;
+    var labelPrec = isEtudiant ? 'Cible — 1 mois de charges fixes (profil étudiant)' : 'Cible — charges fixes × 3 mois';
+    var dashStatLabel = document.querySelector('#dashboard .dash-stat .dash-stat-label');
+    if (dashStatLabel) dashStatLabel.textContent = labelPrec;
+    document.getElementById('dashPrecaution').textContent = isEtudiant
+      ? formatEur(precautionMini) + ' min · ' + formatEur(precaution3) + ' idéal à terme'
+      : formatEur(precaution3) + ' min · ' + formatEur(precaution6) + ' idéal';
+    var pctPrec = precautionMini > 0 ? Math.min(100, Math.round((epSure / precautionMini) * 100)) : 100;
+    document.getElementById('dashPrecautionSub').textContent = epSure >= precautionMini
+      ? 'Matelas constitué — ' + formatEur(epSure) + ' sur livrets réglementés.'
+      : 'Il manque ' + formatEur(Math.max(0, precautionMini - epSure)) + ' pour atteindre ' + (isEtudiant ? '1 mois' : '3 mois') + ' de charges fixes.';
+    setTimeout(function() {
+      document.getElementById('dashPrecautionBar').style.width = pctPrec + '%';
+    }, 400);
+
+    if (totalDettes > 0 || hasDecouverte) {
+      document.getElementById('dashDettesTitre').style.display = 'block';
+      document.getElementById('dashDettes').innerHTML = renderDettesBlock(totalDettes, detteMens, tauxDettes, hasDecouverte);
+    }
+
+    document.getElementById('dashRecos').innerHTML = buildRecos(
+      epSure, precautionMini, hasPEA, invest, revenu, fixes, dispo,
+      risqueVal, horizonVal, objectif, cc, lep, status, fixes, avEuros,
+      isEtudiant, totalDettes, tauxDettes, hasDetteElevee, hasDecouverte, detteMens
+    );
+
+    buildProjection(invest, epInvest, horizonVal, age, isEtudiant);
+  }
+
+  function computeScore(epSure, precaution3, fixes, revenu, invest, hasPEA, horizon, dispo, status, ratioFixes) {
+    var isEtudiant = (status === 'etudiant' || status === 'etudiant-job');
+    var score = 0;
+    if (precaution3 > 0) {
+      var cible = isEtudiant ? precaution3 / 3 : precaution3;
+      score += Math.min(30, Math.round((epSure / cible) * 30));
+    }
+    if (isEtudiant) {
+      if (ratioFixes <= 55) score += 25;
+      else if (ratioFixes <= 70) score += 18;
+      else if (ratioFixes <= 80) score += 10;
+      else score += 3;
+    } else {
+      if (ratioFixes <= 40) score += 25;
+      else if (ratioFixes <= 50) score += 18;
+      else if (ratioFixes <= 60) score += 10;
+      else score += 3;
+    }
+    if (hasPEA) score += 20;
+    else if (horizon !== 'court') score += 0;
+    else score += 10;
+    var ratioInvest = revenu > 0 ? (invest / revenu) * 100 : 0;
+    if (isEtudiant) {
+      if (ratioInvest >= 10) score += 25;
+      else if (ratioInvest >= 5)  score += 18;
+      else if (ratioInvest >= 2)  score += 10;
+    } else {
+      if (ratioInvest >= 20) score += 25;
+      else if (ratioInvest >= 15) score += 20;
+      else if (ratioInvest >= 10) score += 13;
+      else if (ratioInvest >= 5)  score += 7;
+    }
+    return Math.min(100, Math.round(score));
+  }
+
+  function renderScore(score) {
+    var circle  = document.getElementById('scoreCircle');
+    var valEl   = document.getElementById('scoreVal');
+    var titleEl = document.getElementById('scoreTitle');
+    var subEl   = document.getElementById('scoreSub');
+    valEl.textContent = score;
+    var color, title, sub;
+    if (score >= 80) {
+      color = '#52B788'; title = 'Situation <em>solide</em>';      sub = 'Bonne structure financière. Quelques optimisations possibles.';
+    } else if (score >= 60) {
+      color = '#2A6B4F'; title = 'En bonne <em>voie</em>';         sub = 'Les bases sont là. Des actions concrètes peuvent accélérer la progression.';
+    } else if (score >= 40) {
+      color = '#9B7B2B'; title = 'À <em>structurer</em>';          sub = 'Des points importants à corriger avant d\'investir efficacement.';
+    } else {
+      color = '#C0392B'; title = 'À <em>reconstruire</em>';        sub = 'Priorité aux fondations : précaution et organisation budgétaire.';
+    }
+    circle.style.borderColor = color;
+    valEl.style.color = color;
+    titleEl.innerHTML = title;
+    subEl.textContent = sub;
+  }
+
+  function renderPatrimoine(epSure, epInvest, epPlace, cc, total) {
+    if (total === 0) {
+      document.getElementById('dashPatrimoine').innerHTML = '<div style="font-size:11px;color:var(--muted);text-align:center;padding:8px 0;">Aucun patrimoine renseigné.</div>';
+      return;
+    }
+    var items = [
+      { label: 'Livrets sécurisés', val: epSure,   color: '#2A6B4F' },
+      { label: 'Épargne investie',  val: epInvest,  color: '#52B788' },
+      { label: 'Épargne placée',    val: epPlace,   color: '#9B7B2B' },
+      { label: 'Compte courant',    val: cc,         color: '#9A9A9A' }
+    ];
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      if (item.val <= 0) continue;
+      var pct = Math.max(4, Math.round((item.val / total) * 100));
+      html += '<div class="pat-row">' +
+        '<div class="pat-label">' + item.label + '</div>' +
+        '<div class="pat-bar-wrap"><div class="pat-bar" style="width:' + pct + '%;background:' + item.color + ';"><span>' + pct + '%</span></div></div>' +
+        '<div class="pat-val">' + formatEurK(item.val) + '</div>' +
+        '</div>';
+    }
+    document.getElementById('dashPatrimoine').innerHTML = html || '<div style="font-size:11px;color:var(--muted);">Aucun patrimoine renseigné.</div>';
+  }
+
+  function statBox(label, val, sub, colorClass) {
+    return '<div class="dash-stat"><div class="dash-stat-label">' + label + '</div>' +
+      '<div class="dash-stat-val ' + (colorClass || '') + '">' + val + '</div>' +
+      '<div class="dash-stat-sub">' + sub + '</div></div>';
+  }
+
+  function renderDettesBlock(totalDettes, detteMens, tauxMoyen, hasDecouverte) {
+    var decouvert    = getVal('detteDecouvert');
+    var consoCap     = getVal('detteConsoCap'),    consoTaux  = getVal('detteConsoTaux');
+    var etudiantCap  = getVal('detteEtudiantCap'), etudiantTaux = getVal('detteEtudiantTaux');
+    var autreCap     = getVal('detteAutreCap'),    autreTaux  = getVal('detteAutreTaux');
+
+    var html = '<div style="background:var(--white);border:1px solid var(--line);border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:10px;">';
+    var lignes = [
+      { label: 'Crédit conso / perso', cap: consoCap,    taux: consoTaux    },
+      { label: 'Prêt étudiant',        cap: etudiantCap, taux: etudiantTaux },
+      { label: 'Autre dette',          cap: autreCap,    taux: autreTaux    }
+    ];
+    var hasLines = false;
+    for (var i = 0; i < lignes.length; i++) {
+      if (lignes[i].cap > 0) { hasLines = true; break; }
+    }
+    if (hasLines) {
+      html += '<div style="display:flex;flex-direction:column;gap:6px;">';
+      for (var j = 0; j < lignes.length; j++) {
+        var l = lignes[j];
+        if (l.cap <= 0) continue;
+        var tc = l.taux > 5 ? 'var(--danger)' : l.taux > 2 ? 'var(--warn)' : 'var(--accent)';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;">' +
+          '<span style="color:var(--soft);font-weight:500;">' + l.label + '</span>' +
+          '<span style="display:flex;gap:12px;align-items:center;">' +
+          '<span style="color:var(--muted);">' + formatEur(l.cap) + '</span>' +
+          (l.taux > 0 ? '<span style="color:' + tc + ';font-weight:600;">' + l.taux.toFixed(1) + '%</span>' : '') +
+          '</span></div>';
+      }
+      html += '</div>';
+    }
+    if (decouvert > 0) {
+      html += '<div style="display:flex;justify-content:space-between;font-size:11px;padding:6px 0;border-top:1px solid var(--line);">' +
+        '<span style="color:var(--danger);font-weight:500;">Découvert habituel</span>' +
+        '<span style="color:var(--danger);font-weight:600;">' + formatEur(decouvert) + '</span></div>';
+    }
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:10px;">' +
+      '<div><div style="font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);">Total dettes</div>' +
+      '<div style="font-family:\'DM Serif Display\',serif;font-size:22px;color:var(--danger);letter-spacing:-0.5px;line-height:1;">' + formatEur(totalDettes + decouvert) + '</div></div>' +
+      (detteMens > 0 ? '<div style="text-align:right;"><div style="font-size:8px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);">Mensualités</div>' +
+      '<div style="font-family:\'DM Serif Display\',serif;font-size:22px;color:var(--warn);letter-spacing:-0.5px;line-height:1;">' + formatEur(detteMens) + '/mois</div></div>' : '') +
+      '</div>';
+    if (tauxMoyen > 0) {
+      var bg = tauxMoyen > 5 ? 'rgba(192,57,43,0.07)' : 'rgba(155,123,43,0.07)';
+      var bd = tauxMoyen > 5 ? 'rgba(192,57,43,0.20)' : 'rgba(155,123,43,0.20)';
+      var tx = tauxMoyen > 5 ? 'var(--danger)' : 'var(--warn)';
+      var msg = tauxMoyen > 5
+        ? 'Taux moyen ' + tauxMoyen.toFixed(1) + '% — rembourser avant d\'investir. Les intérêts absorbent tout rendement boursier.'
+        : 'Taux moyen ' + tauxMoyen.toFixed(1) + '% — arbitrage remboursement / investissement à étudier.';
+      html += '<div style="background:' + bg + ';border:1px solid ' + bd + ';border-radius:4px;padding:10px 12px;font-size:10px;color:' + tx + ';font-weight:500;line-height:1.5;">' + msg + '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
+  function buildRecos(epSure, precaution3, hasPEA, invest, revenu, fixes, dispo, risque, horizon, objectif, cc, lep, status, chargesFixes, avEuros, isEtudiant, totalDettes, tauxDettes, hasDetteElevee, hasDecouverte, detteMens) {
+    var items = [];
+    if (hasDecouverte) {
+      items.push({ urgent: true, label: 'Éliminer le découvert bancaire en priorité absolue',
+        sub: 'Un découvert coûte entre 8 et 20% d\'intérêts selon les banques. À résorber avant toute autre action.' });
+    }
+    if (hasDetteElevee) {
+      items.push({ urgent: true, label: 'Rembourser les dettes à taux élevé avant d\'investir',
+        sub: 'Taux moyen de ' + tauxDettes.toFixed(1) + '% sur vos crédits. Investir en espérant 7% annuel est contre-productif face à une dette à ' + tauxDettes.toFixed(1) + '%.' });
+    }
+    if (epSure < precaution3 && precaution3 > 0) {
+      items.push({ urgent: true, label: 'Constituer le matelas de précaution',
+        sub: 'Il manque ' + formatEur(precaution3 - epSure) + ' sur vos livrets réglementés pour couvrir ' + (isEtudiant ? '1 mois' : '3 mois') + ' de charges fixes.' });
+    }
+    if (isEtudiant) {
+      items.push({ urgent: false, label: 'Vérifier toutes les aides disponibles pour étudiant',
+        sub: 'Bourse CROUS, APL / ALS si logement autonome, prime d\'activité si job étudiant (+800 €/mois), mutuelle étudiante.' });
+    }
+    if (lep === 0) {
+      items.push({ urgent: false, label: 'Vérifier l\'éligibilité au LEP',
+        sub: isEtudiant ? 'Le LEP est à 2,5% en 2026. Les étudiants sont très souvent éligibles — à vérifier en priorité.'
+          : 'Le Livret d\'Épargne Populaire est à 2,5% en 2026 — meilleur taux garanti. Sous conditions de revenus.' });
+    }
+    var ccExcess = Math.max(0, cc - chargesFixes * 1.5);
+    if (ccExcess > 300) {
+      items.push({ urgent: false, label: 'Réorienter le surplus du compte courant',
+        sub: formatEur(ccExcess) + ' dorment sans rendement. À orienter vers le remboursement de dettes si taux > 3%, ou vers le Livret A / PEA sinon.' });
+    }
+    if (!hasPEA && horizon !== 'court' && !hasDetteElevee) {
+      items.push({ urgent: true, label: 'Ouvrir un PEA dès maintenant',
+        sub: isEtudiant ? 'Même avec 10 €. Le compteur fiscal de 5 ans démarre à l\'ouverture. Commencer étudiant vous place 5 ans en avance.'
+          : 'Même avec un premier versement symbolique. Le compteur fiscal de 5 ans démarre à la date d\'ouverture.' });
+    }
+    if (status === 'independant' || status === 'les-deux') {
+      items.push({ urgent: false, label: 'Adapter le matelas de précaution au profil indépendant',
+        sub: 'En tant qu\'indépendant, un matelas de 6 mois minimum est recommandé. Cible : ' + formatEur(chargesFixes * 6) + '.' });
+    }
+    if (invest > 0 && dispo > 0 && !hasDetteElevee) {
+      items.push({ urgent: false, label: 'Automatiser l\'investissement de ' + formatEur(invest) + '/mois',
+        sub: isEtudiant ? 'Même 20 ou 30 € automatiques par mois construisent l\'habitude d\'épargne. La régularité compte plus que le montant.'
+          : 'Mettre en place un virement automatique le jour du salaire. L\'argent investi part avant toute dépense.' });
+    }
+    if (horizon !== 'court' && !hasDetteElevee) {
+      var supportDesc;
+      if (risque === 'eleve')  supportDesc = 'Supports actions diversifiés à l\'international via un PEA. Horizon long terme — les fluctuations à court terme sont acceptables.';
+      else if (risque === 'moyen') supportDesc = 'Mix équilibré entre supports actions diversifiés (PEA) et fonds sécurisés (assurance-vie fonds euros).';
+      else supportDesc = 'Priorité aux supports sécurisés : livrets réglementés, assurance-vie fonds euros.';
+      items.push({ urgent: false, label: 'Orientation des placements selon votre profil', sub: supportDesc });
+    }
+    if (avEuros > 5000 && horizon === 'long' && risque !== 'faible' && !hasDetteElevee) {
+      items.push({ urgent: false, label: 'Arbitrage assurance-vie fonds euros à envisager',
+        sub: formatEur(avEuros) + ' en fonds euros sur horizon long terme. Un arbitrage partiel vers des unités de compte pourrait améliorer la performance — à évaluer avec un professionnel.' });
+    }
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      html += '<div class="reco-card ' + (item.urgent ? 'urgent-card' : 'priority') + '">' +
+        '<div class="reco-num ' + (item.urgent ? 'urgent' : '') + '">' + (i + 1) + '</div>' +
+        '<div><div class="reco-label">' + item.label + '</div>' +
+        '<div class="reco-sub">' + item.sub + '</div></div></div>';
+    }
+    return html;
+  }
+
+  function buildProjection(invest, capitalInvesti, horizon, age, isEtudiant) {
+    var rate  = 0.07;
+    var years = isEtudiant ? 20 : (horizon === 'long' ? 20 : horizon === 'moyen' ? 10 : 5);
+    var list  = [];
+    if (years >= 5)  list.push(5);
+    if (years >= 10) list.push(10);
+    if (years >= 15) list.push(15);
+    if (years >= 20) list.push(20);
+    var projs = [];
+    for (var i = 0; i < list.length; i++) {
+      var y = list[i];
+      var val = Math.round(capitalInvesti * Math.pow(1 + rate, y) + invest * 12 * ((Math.pow(1 + rate, y) - 1) / rate));
+      projs.push({ y: y, val: val, ageAt: age ? age + y : null });
+    }
+    var maxVal = projs.length > 0 ? projs[projs.length - 1].val : invest * 12 * years;
+    var etudiantNote = isEtudiant ? '<div style="font-size:9px;color:#52B788;margin-bottom:8px;line-height:1.5;font-weight:500;">Avantage étudiant — chaque année de départ précoce génère une croissance supplémentaire grâce aux intérêts composés.</div>' : '';
+    var rowsHtml = '';
+    for (var j = 0; j < projs.length; j++) {
+      var p = projs[j];
+      var pct = maxVal > 0 ? Math.min(98, Math.round((p.val / maxVal) * 100)) : 10;
+      var ageLabel = p.ageAt ? ' (' + p.ageAt + ' ans)' : '';
+      rowsHtml += '<div class="projection-row">' +
+        '<div class="proj-year">' + p.y + ' ans' + ageLabel + '</div>' +
+        '<div class="proj-bar-wrap"><div class="proj-bar" style="width:' + pct + '%;"><span>' + formatEurK(p.val) + '</span></div></div>' +
+        '</div>';
+    }
+    document.getElementById('dashProjection').innerHTML =
+      etudiantNote +
+      '<div class="projection-title">Capital investi uniquement · 7% annuel moyen · ' + formatEur(invest) + '/mois</div>' +
+      '<div class="projection-rows">' + rowsHtml + '</div>' +
+      '<div style="font-size:8px;color:rgba(255,255,255,0.22);margin-top:10px;line-height:1.6;">Projection sur l\'épargne investie (PEA / AV UC) à 7% annuel moyen historique. Livrets et fonds euros non inclus. Les performances passées ne préjugent pas des performances futures.</div>';
+  }
+
+  function printDashboard() {
+    var name = document.getElementById('clientName').value || 'Client';
+    var styleId = 'print-style';
+    if (!document.getElementById(styleId)) {
+      var s = document.createElement('style');
+      s.id = styleId;
+      s.textContent = '@media print {' +
+        '.app-header, .progress-wrap, #stepsContainer, .modal-overlay, .btn-restart, button.btn-accent[onclick="printDashboard()"] { display: none !important; }' +
+        'body { background: white !important; padding: 0 !important; display: block !important; font-size: 11px !important; }' +
+        '#dashboard { display: flex !important; flex-direction: column !important; gap: 10px !important; padding: 0 !important; max-width: 100% !important; width: 100% !important; }' +
+        '.dash-header, .score-block, .projection-block, .reco-card, .pat-bar, .dash-bar { -webkit-print-color-adjust: exact; print-color-adjust: exact; }' +
+        '.score-block, .dash-grid, .patrimoine-block, .reco-card, .projection-block, .dash-stat { break-inside: avoid; }' +
+        '.dash-stat-val { font-size: 18px !important; } .score-val { font-size: 22px !important; }' +
+        '.reco-label { font-size: 11px !important; } .reco-sub { font-size: 9px !important; }' +
+        '@page { size: A4 portrait; margin: 12mm 14mm; }' +
+        '}';
+      document.head.appendChild(s);
+    }
+    var prevTitle = document.title;
+    document.title = 'Diagnostic_' + name.replace(/\s+/g, '_') + '_' + new Date().toISOString().slice(0, 10) + '_ZeroToPatrimoine';
+    window.print();
+    document.title = prevTitle;
+  }
+
+  function formatEur(n) {
+    if (!n || isNaN(n)) return '0 €';
+    return new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n) + ' €';
+  }
+
+  function formatEurK(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace('.', ',') + ' M€';
+    if (n >= 10000)   return Math.round(n / 1000) + ' k€';
+    return formatEur(n);
+  }
+
+  function confirmRestart() { document.getElementById('modalOverlay').classList.add('visible'); }
+  function closeModal()     { document.getElementById('modalOverlay').classList.remove('visible'); }
+
+  function restartDiag() {
+    closeModal();
+    document.getElementById('dashboard').classList.remove('visible');
+    document.getElementById('dashDettesTitre').style.display = 'none';
+    document.getElementById('dashDettes').innerHTML = '';
+    document.getElementById('stepsContainer').style.display = 'none';
+    var w = document.getElementById('welcomeScreen');
+    if (w) w.style.display = 'flex';
+    var inputs = document.querySelectorAll('input[type=number], input[type=text]');
+    for (var i = 0; i < inputs.length; i++) inputs[i].value = '';
+    var selects = document.querySelectorAll('select');
+    for (var j = 0; j < selects.length; j++) selects[j].selectedIndex = 0;
+    var results = document.querySelectorAll('.calc-result');
+    for (var k = 0; k < results.length; k++) results[k].classList.remove('visible');
+    currentStep = 1;
+    var cards = document.querySelectorAll('.step-card');
+    for (var m = 0; m < cards.length; m++) cards[m].classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    updateProgress();
+    window.scrollTo(0, 0);
+  }
+
+  function startDiag() {
+    var w = document.getElementById('welcomeScreen');
+    if (w) w.style.display = 'none';
+    document.getElementById('stepsContainer').style.display = 'flex';
+    window.scrollTo(0, 0);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var chargeIds = ['chargeLoyer','chargeTransport','chargeAbos','chargeMutuelle','chargeAutres','chargeVie'];
+    var epargneIds = ['epargneLivret','epargneLep','epargneCC','epargnePEA','epargneAVUC','epargneAVEuros','epargneAutres'];
+    var detteIds = ['detteConsoCap','detteConsoTaux','detteEtudiantCap','detteEtudiantTaux','detteDecouvert','detteAutreCap','detteAutreTaux','detteMensualite'];
+
+    function attachListener(ids, fn) {
+      for (var i = 0; i < ids.length; i++) {
+        var el = document.getElementById(ids[i]);
+        if (el) el.addEventListener('input', fn);
+      }
+    }
+    attachListener(chargeIds,  computeCharges);
+    attachListener(epargneIds, computeEpargne);
+    attachListener(detteIds,   computeDettes);
+  });
+
+</script>
+</body>
+</html>
