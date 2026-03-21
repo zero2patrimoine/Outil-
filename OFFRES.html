@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero to Patrimoine — Accompagnement</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════════
+   CONFIGURATION — MODIFIER ICI UNIQUEMENT
+   ═══════════════════════════════════════════ */
+:root {
+  /* ── Liens à remplacer ── */
+  --lien-lancement:     "https://calendly.com/simon-enzo/offre-de-lancement";
+  --lien-decouverte:    "https://calendly.com/simon-enzo/30min";
+  --lien-3mois:         "https://calendly.com/simon-enzo/reunion-offre-lancement";
+  --lien-6mois:         "https://calendly.com/simon-enzo/reunion-offre-construction";
+  --lien-canal:         "https://buy.stripe.com/canal";
+  --lien-ebook:         "https://gumroad.com/zerotopatrimoine/ebook";
+  --lien-discord:       "https://discord.gg/EXa5NbkjeJ";
+  --lien-instagram:     "https://instagram.com/zerotopatrimoine";
+  --lien-tiktok:        "https://tiktok.com/@zerotopatrimoine";
+
+  /* ── Palette ── */
+  --bg:        #EDEAE6;
+  --white:     #FAF9F7;
+  --black:     #141414;
+  --accent:    #2A6B4F;
+  --accent2:   #52B788;
+  --muted:     #9A9A9A;
+  --line:      #E0DDD8;
+  --warn:      #9B7B2B;
+  --soft:      #3D3D3D;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--black);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════════ */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--black);
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid var(--accent);
+}
+
+.nav-brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 17px;
+  color: var(--white);
+  letter-spacing: 0.01em;
+}
+
+.nav-brand em {
+  font-style: italic;
+  color: var(--accent2);
+}
+
+.nav-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--white); }
+
+/* ═══════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════ */
+.hero {
+  background: var(--black);
+  padding: 80px 24px 72px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(42,107,79,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(36px, 6vw, 56px);
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent2);
+}
+
+.hero-sub {
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 480px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+.disclaimer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.03em;
+}
+
+.disclaimer::before {
+  content: '⚠';
+  font-size: 10px;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION WRAPPER
+   ═══════════════════════════════════════════ */
+.section {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 64px 24px;
+}
+
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 4vw, 38px);
+  color: var(--black);
+  line-height: 1.2;
+  margin-bottom: 8px;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.section-sub {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 560px;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+/* ═══════════════════════════════════════════
+   GRILLE OFFRES
+   ═══════════════════════════════════════════ */
+.offres-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.offre-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.offre-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+.offre-card.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.offre-card-top {
+  padding: 24px 24px 0;
+}
+
+.offre-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+
+.badge-canal    { background: rgba(42,107,79,0.08); color: var(--accent); }
+.badge-decouverte { background: rgba(42,107,79,0.08); color: var(--accent); }
+.badge-lancement { background: rgba(42,107,79,0.15); color: var(--accent); }
+.badge-construction { background: var(--accent); color: var(--white); }
+.badge-ebook    { background: rgba(155,123,43,0.12); color: var(--warn); }
+
+.offre-nom {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+
+.offre-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.offre-prix {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.offre-prix .montant {
+  font-family: 'DM Serif Display', serif;
+  font-size: 36px;
+  color: var(--black);
+}
+
+.offre-prix .periode {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.offre-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0 24px;
+}
+
+.offre-features {
+  padding: 20px 24px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.offre-features li {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--soft);
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+
+.offre-features li::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border-radius: 50%;
+  background: rgba(42,107,79,0.12);
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='8' viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4L3.5 6.5L9 1' stroke='%232A6B4F' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 1px;
+}
+
+.offre-cta {
+  padding: 0 24px 24px;
+}
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: #1F5239;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+}
+
+.btn-secondary:hover {
+  background: rgba(42,107,79,0.06);
+}
+
+.btn-warn {
+  background: var(--warn);
+  color: var(--white);
+}
+
+.btn-warn:hover { background: #7A6020; }
+
+/* ═══════════════════════════════════════════
+   CANAL DISCORD — Mise en avant spéciale
+   ═══════════════════════════════════════════ */
+.canal-banner {
+  background: var(--black);
+  border-radius: 8px;
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.canal-left h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.canal-left p {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.canal-prix-badge {
+  background: var(--accent);
+  color: var(--white);
+  border-radius: 8px;
+  padding: 16px 24px;
+  text-align: center;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.canal-prix-badge .montant {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  display: block;
+  line-height: 1;
+}
+
+.canal-prix-badge .periode {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   PROFILS
+   ═══════════════════════════════════════════ */
+.profils-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.profil-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 3px solid var(--accent);
+}
+
+.profil-card.danger { border-left-color: #C0392B; }
+.profil-card.warn   { border-left-color: var(--warn); }
+.profil-card.green  { border-left-color: var(--accent2); }
+.profil-card.dark   { border-left-color: var(--accent); }
+
+.profil-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.profil-badge.danger { background: #C0392B; }
+.profil-badge.warn   { background: var(--warn); }
+.profil-badge.green  { background: var(--accent2); }
+.profil-badge.dark   { background: var(--accent); }
+
+.profil-titre {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+
+.profil-desc {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION SOMBRE — Comment ca fonctionne
+   ═══════════════════════════════════════════ */
+.section-dark {
+  background: var(--black);
+  padding: 64px 24px;
+}
+
+.section-dark .section-title { color: var(--white); }
+.section-dark .section-sub { color: rgba(255,255,255,0.35); }
+.section-dark .section-eyebrow { color: var(--accent2); }
+
+.steps-grid {
+  max-width: 960px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+}
+
+.step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 40px;
+  color: rgba(255,255,255,0.08);
+  line-height: 1;
+}
+
+.step-titre {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--white);
+}
+
+.step-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.7;
+}
+
+/* ═══════════════════════════════════════════
+   FAQ ACCORDEON
+   ═══════════════════════════════════════════ */
+.faq-list {
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.faq-item {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: 16px;
+}
+
+.faq-icon {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 50%;
+  background: rgba(42,107,79,0.1);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+
+.faq-item.open .faq-icon { transform: rotate(45deg); }
+
+.faq-reponse {
+  display: none;
+  padding: 0 20px 18px;
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.7;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.faq-item.open .faq-reponse { display: block; }
+
+/* ═══════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════ */
+footer {
+  background: var(--black);
+  padding: 40px 24px;
+  border-top: 2px solid var(--accent);
+}
+
+.footer-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.footer-brand {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.footer-brand em { color: var(--accent2); font-style: italic; }
+
+.footer-legal {
+  font-size: 11px;
+  color: rgba(255,255,255,0.2);
+  line-height: 1.8;
+  max-width: 400px;
+}
+
+.footer-social {
+  display: flex;
+  gap: 12px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.social-link:hover {
+  color: var(--white);
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* ═══════════════════════════════════════════
+   MOBILE
+   ═══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .canal-banner { flex-direction: column; }
+  .canal-prix-badge { align-self: stretch; }
+  .footer-inner { flex-direction: column; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ════════════ NAV ════════════ -->
+<nav>
+  <span class="nav-brand">Zero <em>to</em> Patrimoine</span>
+  <ul class="nav-links">
+    <li><a href="#offres">Offres</a></li>
+    <li><a href="#profils">Mon profil</a></li>
+    <li><a href="#comment">Comment ca marche</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#cgv">CGV</a></li>
+  </ul>
+</nav>
+
+<!-- ════════════ HERO ════════════ -->
+<section class="hero">
+  <p class="hero-eyebrow">Éducation financière — @zerotopatrimoine</p>
+  <h1>Construis ton patrimoine<br><em>depuis zéro.</em></h1>
+  <p class="hero-sub">
+    Un accompagnement éducatif et personnalisé pour comprendre,
+    structurer et investir ton épargne — quel que soit ton point de départ.
+  </p>
+  <!-- CTA principal — offre de lancement -->
+  <div style="margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+    <a href="https://calendly.com/simon-enzo/offre-de-lancement" style="display:inline-flex;align-items:center;gap:10px;background:#52B788;color:#141414;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:16px 32px;border-radius:6px;text-decoration:none;letter-spacing:0.02em;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+      <span>Réserver mon appel gratuit — 30 min</span>
+      <span style="font-size:16px;">→</span>
+    </a>
+    <span style="font-size:11px;color:rgba(255,255,255,0.30);letter-spacing:0.04em;">Sans engagement · Visio · Réponse immédiate</span>
+  </div>
+  <div style="margin-top:28px;">
+    <span class="disclaimer">
+      Contenu éducatif uniquement — Pas de conseil en investissement personnalisé — Non certifié AMF
+    </span>
+  </div>
+</section>
+
+<!-- ════════════ PROFILS ════════════ -->
+<section class="section" id="profils">
+  <p class="section-eyebrow">Par où commencer ?</p>
+  <h2 class="section-title">Trouve ton <em>profil</em></h2>
+  <p class="section-sub">Peu importe ton point de départ, il y a un accompagnement adapté à ta situation.</p>
+
+  <div class="profils-grid">
+    <div class="profil-card danger">
+      <div class="profil-badge danger">A</div>
+      <div class="profil-titre">Pas encore d'épargne</div>
+      <div class="profil-desc">Tu vis souvent à découvert ou sans réserve. La priorité est de stabiliser ta situation avant d'investir.</div>
+    </div>
+    <div class="profil-card warn">
+      <div class="profil-badge warn">B</div>
+      <div class="profil-titre">Épargne qui dort</div>
+      <div class="profil-desc">Tu as de l'épargne sur un livret mais elle ne travaille pas. Il faut l'activer et la faire fructifier.</div>
+    </div>
+    <div class="profil-card green">
+      <div class="profil-badge green">C</div>
+      <div class="profil-titre">Prêt à investir</div>
+      <div class="profil-desc">Tu as de l'épargne et tu veux l'investir. La question : dans quoi, comment, dans quelle enveloppe fiscale.</div>
+    </div>
+    <div class="profil-card dark">
+      <div class="profil-badge dark">D</div>
+      <div class="profil-titre">Déjà investisseur</div>
+      <div class="profil-desc">Tu investis déjà mais tu veux optimiser les frais, la fiscalité et la diversification de ton portefeuille.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ OFFRES ════════════ -->
+<section class="section" id="offres" style="padding-top: 0;">
+  <p class="section-eyebrow">Les offres</p>
+  <h2 class="section-title">Choisis ton <em>niveau d'accompagnement</em></h2>
+  <p class="section-sub">De l'accès au canal communauté jusqu'à un suivi sur 6 mois. Chaque offre est pensée pour un moment précis de ton parcours.</p>
+
+  <!-- Canal Discord — mise en avant -->
+  <div class="canal-banner">
+    <div class="canal-left">
+      <h3>Canal Investisseur — Discord</h3>
+      <p>Rejoins la communauté. Accès au canal privé : contenus éducatifs hebdomadaires, décryptages marchés, ressources exclusives et échanges avec les autres membres.</p>
+      <div style="margin-top:14px;background:rgba(82,183,136,0.12);border:1px solid rgba(82,183,136,0.3);border-radius:6px;padding:12px 14px;">
+        <p style="font-size:13px;color:var(--accent2);font-weight:700;margin-bottom:4px;">🎁 Offre early adopter — places limitées</p>
+        <p style="font-size:12px;color:rgba(255,255,255,0.5);line-height:1.6;">Les <strong style="color:var(--white);">50 premiers inscrits</strong> bénéficient d'un accès <strong style="color:var(--white);">gratuit à vie</strong> au canal — même après le passage en payant. Aucun abonnement, aucune surprise.</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div class="canal-prix-badge">
+        <span class="montant" style="font-size:22px;text-decoration:line-through;opacity:0.4;">12,99 €</span>
+        <span class="montant" style="display:block;">Gratuit</span>
+        <div class="periode">pour les 50 premiers</div>
+        <div class="periode" style="margin-top:2px;">puis 12,99 €/mois</div>
+      </div>
+      <!-- ✏️ MODIFIER href avec ton lien Discord -->
+      <a href="https://discord.gg/EXa5NbkjeJ" class="btn btn-secondary" style="background:var(--accent2);color:var(--black);border-color:var(--accent2);min-width:160px;font-weight:700;">
+        Rejoindre gratuitement
+      </a>
+    </div>
+  </div>
+
+  <!-- Grille 3 offres -->
+  <!-- Offre de lancement — gratuit -->
+  <div style="background:var(--black);border-radius:8px;padding:28px 32px;margin-bottom:20px;border:1px solid rgba(82,183,136,0.25);position:relative;overflow:hidden;">
+    <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#2A6B4F,#52B788);"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:200px;">
+        <span style="display:inline-block;background:#52B788;color:#141414;font-size:9px;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;margin-bottom:14px;">Gratuit — sans engagement</span>
+        <div style="font-family:'DM Serif Display',serif;font-size:24px;color:#FAF9F7;margin-bottom:8px;">Offre de lancement</div>
+        <div style="font-size:13px;font-weight:300;color:#9A9A9A;line-height:1.7;max-width:420px;">Un premier échange de 30 minutes pour te présenter mon parcours, mon approche et l'accompagnement que je propose. Pas de diagnostic, pas de pression — juste une conversation honnête pour voir si on est alignés.</div>
+        <ul style="list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:8px;">
+          <li style="font-size:12px;color:#FAF9F7;display:flex;align-items:flex-start;gap:8px;"><span style="color:#52B788;font-weight:700;flex-shrink:0;">✓</span>Mon parcours et pourquoi j'ai créé Zero to Patrimoine</li>
+          <li style="font-size:12px;color:#FAF9F7;display:flex;align-items:flex-start;gap:8px;"><span style="color:#52B788;font-weight:700;flex-shrink:0;">✓</span>Aperçu de l'outil de diagnostic et des supports</li>
+          <li style="font-size:12px;color:#FAF9F7;display:flex;align-items:flex-start;gap:8px;"><span style="color:#52B788;font-weight:700;flex-shrink:0;">✓</span>Présentation des offres d'accompagnement</li>
+          <li style="font-size:12px;color:#FAF9F7;display:flex;align-items:flex-start;gap:8px;"><span style="color:#52B788;font-weight:700;flex-shrink:0;">✓</span>Questions / réponses libres</li>
+        </ul>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;flex-shrink:0;">
+        <div style="background:rgba(82,183,136,0.1);border:1px solid rgba(82,183,136,0.25);border-radius:8px;padding:16px 24px;text-align:center;">
+          <div style="font-family:'DM Serif Display',serif;font-size:32px;color:#52B788;line-height:1;">Gratuit</div>
+          <div style="font-size:11px;color:#9A9A9A;margin-top:4px;">30 minutes — visio</div>
+        </div>
+        <a href="https://calendly.com/simon-enzo/offre-de-lancement" class="btn btn-primary" style="background:#52B788;color:#141414;font-weight:700;min-width:180px;text-align:center;padding:14px 20px;border-radius:6px;text-decoration:none;font-size:13px;display:block;">
+          Réserver gratuitement
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="offres-grid">
+
+    <!-- Offre 1 — Découverte -->
+    <div class="offre-card">
+      <div class="offre-card-top">
+        <span class="offre-badge badge-decouverte">Séance unique</span>
+        <div class="offre-nom">Offre Découverte</div>
+        <div class="offre-desc">Une séance complète pour faire le point, identifier tes priorités et repartir avec un plan d'action concret et personnalisé.</div>
+        <div class="offre-prix">
+          <span class="montant">127 €</span>
+          <span class="periode">— séance unique</span>
+        </div>
+      </div>
+      <hr class="offre-divider">
+      <ul class="offre-features">
+        <li>1 séance visio de 60 minutes</li>
+        <li>Diagnostic financier complet via l'outil interactif</li>
+        <li>Plan d'action personnalisé remis sous 72h</li>
+        <li>Présentations PDF PEA + Épargne incluses</li>
+        <li>1 mois d'accès au canal Discord inclus</li>
+      </ul>
+      <div class="offre-cta">
+        <a href="https://calendly.com/simon-enzo/30min" class="btn btn-secondary">
+          Réserver ma séance
+        </a>
+      </div>
+    </div>
+
+    <!-- Offre 2 — 3 mois -->
+    <div class="offre-card featured">
+      <div class="offre-card-top">
+        <span class="offre-badge badge-lancement">Accompagnement 3 mois</span>
+        <div class="offre-nom">Lancement</div>
+        <div class="offre-desc">Pour passer à l'action et être accompagné pendant tes premiers investissements, de A à Z.</div>
+        <div class="offre-prix">
+          <span class="montant">297 €</span>
+          <span class="periode">— 3 mois</span>
+        </div>
+      </div>
+      <hr class="offre-divider">
+      <ul class="offre-features">
+        <li>Tout ce qui est inclus dans l'Offre Découverte</li>
+        <li>3 séances visio supplémentaires de 45 minutes</li>
+        <li>Comment utiliser l'IA pour booster ton patrimoine et ta performance</li>
+        <li>3 mois d'accès au canal Discord inclus</li>
+        <li>Accès aux détails de mon patrimoine personnel en temps réel</li>
+        <li>Support par messages — réponse sous 48h ouvrées</li>
+        <li>Bilan à la dernière séance — objectifs futurs définis ensemble</li>
+      </ul>
+      <div class="offre-cta">
+        <!-- ✏️ MODIFIER href avec ton lien Calendly -->
+        <a href="https://calendly.com/simon-enzo/reunion-offre-lancement" class="btn btn-primary">
+          Démarrer l'accompagnement
+        </a>
+      </div>
+    </div>
+
+    <!-- Offre 3 — 6 mois -->
+    <div class="offre-card featured">
+      <div class="offre-card-top">
+        <span class="offre-badge badge-construction">Accompagnement 6 mois</span>
+        <div class="offre-nom">Construction</div>
+        <div class="offre-desc">Pour construire sérieusement et ancrer de bonnes habitudes financières durables sur le long terme.</div>
+        <div class="offre-prix">
+          <span class="montant">497 €</span>
+          <span class="periode">— 6 mois</span>
+        </div>
+      </div>
+      <hr class="offre-divider">
+      <ul class="offre-features">
+        <li>Tout ce qui est inclus dans l'offre Lancement</li>
+        <li>6 séances visio supplémentaires de 45 minutes</li>
+        <li>Support prioritaire — réponse sous 24h ouvrées</li>
+        <li>Bilan patrimonial écrit à 3 mois et à 6 mois</li>
+        <li>6 mois d'accès au canal Discord inclus</li>
+        <li>On fixe tes objectifs long terme pour que tu n'aies plus besoin de moi</li>
+      </ul>
+      <div class="offre-cta">
+        <a href="https://calendly.com/simon-enzo/reunion-offre-construction" class="btn btn-primary">
+          Démarrer l'accompagnement
+        </a>
+      </div>
+    </div>
+
+  </div>
+  </div>
+</section>
+
+<!-- ════════════ COMMENT CA MARCHE ════════════ -->
+<section class="section-dark" id="comment">
+  <div class="section" style="padding: 0;">
+    <p class="section-eyebrow" style="color:var(--accent2);">Le processus</p>
+    <h2 class="section-title" style="color:var(--white);margin-bottom:8px;">Comment ça <em style="color:var(--accent2);">fonctionne ?</em></h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.35);margin-bottom:48px;">Un parcours simple et structuré pour avancer concrètement.</p>
+    <div class="steps-grid">
+      <div class="step-item">
+        <div class="step-num">01</div>
+        <div class="step-titre">Tu identifies ton profil</div>
+        <div class="step-desc">Offre de lancement gratuite — 30 min pour se présenter et voir si l'accompagnement te correspond. Sans engagement.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">02</div>
+        <div class="step-titre">Tu réserves et tu règles</div>
+        <div class="step-desc">Créneau disponible directement en ligne. Paiement sécurisé. Confirmation et lien de connexion immédiats.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">03</div>
+        <div class="step-titre">On fait le diagnostic</div>
+        <div class="step-desc">Outil interactif de diagnostic financier. Tableau de bord personnalisé. Vision claire de ta situation réelle.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">04</div>
+        <div class="step-titre">Tu repars avec un plan</div>
+        <div class="step-desc">Plan d'action concret et ordonné. Étapes claires. Présentations adaptées à ton profil remises après la séance.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════ FAQ ════════════ -->
+<section class="section" id="faq">
+  <p class="section-eyebrow">Questions fréquentes</p>
+  <h2 class="section-title">Tu as des <em>questions ?</em></h2>
+  <p class="section-sub">Les réponses aux questions les plus fréquentes avant de se lancer.</p>
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        C'est quoi exactement l'accompagnement ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Un accompagnement éducatif financier. Je t'aide à comprendre le fonctionnement de l'épargne, des investissements et de la fiscalité, et à mettre en place une stratégie adaptée à ta situation. Ce n'est pas du conseil en investissement personnalisé au sens réglementaire — c'est de l'éducation financière appliquée à ta situation concrète.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Faut-il déjà avoir de l'épargne pour en profiter ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Non. Le profil A est spécifiquement conçu pour les personnes qui n'ont pas encore d'épargne. On commence par comprendre pourquoi et on construit les bases ensemble, avant de parler d'investissement.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Quelle est la différence entre les offres 3 mois et 6 mois ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        L'offre 6 mois inclut 3 séances supplémentaires, un support prioritaire avec réponse sous 24h ouvrées au lieu de 48h, et deux bilans patrimoniaux écrits (à 3 mois et à 6 mois) — un document complet que tu gardes et qui documente ta progression. L'offre 3 mois est idéale pour se lancer. L'offre 6 mois est faite pour ceux qui veulent ancrer de vraies habitudes durables.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Es-tu conseiller en investissement certifié AMF ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Non. Je ne suis ni certifié AMF ni titulaire du statut de Conseiller en Investissements Financiers (CIF). Je suis un investisseur particulier qui partage son expérience et ses connaissances de manière pédagogique. Je ne délivre pas de recommandations personnalisées d'achat ou de vente de produits financiers. Pour toute décision financière importante, consulte un conseiller en gestion de patrimoine agréé.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Comment se déroulent les séances ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Toutes les séances se font en visioconférence. Après ta réservation et ton paiement, tu reçois un lien de connexion par email. La première séance commence toujours par le diagnostic financier complet avec l'outil interactif, puis on construit ton plan d'action ensemble.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Puis-je annuler ou me rétracter après un achat ?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Conformément à la législation française, tu bénéficies d'un droit de rétractation de 14 jours à compter de ton achat pour les offres d'accompagnement. L'abonnement au canal Discord est résiliable à tout moment via ton espace Stripe — tu gardes l'accès jusqu'à la fin de la période payée. Aucun engagement de durée. Tarif normal : 12,99 €/mois après la période d'accès offert pour les 50 premiers.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════ CGV ════════════ -->
+<section class="section" id="cgv" style="padding-top:0;">
+  <p class="section-eyebrow">Mentions légales</p>
+  <h2 class="section-title">Conditions Générales <em>de Vente</em></h2>
+  <p class="section-sub">En vigueur à compter du 1er janvier 2026. Applicables à toutes les offres proposées sur ce site.</p>
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 1 — Identification du prestataire
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        <strong>Enzo Simon</strong> — Auto-entrepreneur.<br>
+        SIRET : [À compléter après immatriculation]<br>
+        Activité : Autres enseignements — Éducation financière.<br>
+        Siège social : Tours (37000), France.<br>
+        Contact : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="92e8f7e0fde6fde2f3e6e0fbfffdfbfcf7d2f5fff3fbfebcf1fdff">[email&#160;protected]</a><br><br>
+        Le prestataire exerce en franchise de TVA conformément à l'article 293 B du Code général des impôts. Il n'est pas certifié AMF et ne détient pas le statut de Conseiller en Investissements Financiers (CIF) au sens de l'article L.541-1 du Code monétaire et financier. Les prestations proposées constituent exclusivement un accompagnement éducatif et ne constituent pas un conseil en investissement personnalisé.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 2 — Description des prestations
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Les prestations proposées comprennent :<br><br>
+        <strong>Offre de lancement (Gratuit)</strong> — 1 appel visio de 30 minutes, présentation du parcours et des offres d'accompagnement. Sans engagement.<br><br>
+        <strong>Offre Découverte (127 €)</strong> — 1 séance visio de 60 minutes, diagnostic financier éducatif, plan d'action remis sous 72h, 1 mois d'accès au canal Discord.<br><br>
+        <strong>Offre Lancement — 3 mois (297 €)</strong> — Inclut l'Offre Découverte + 3 séances visio de 45 minutes, accès aux outils éducatifs, support par messages, 3 mois d'accès Discord.<br><br>
+        <strong>Offre Construction — 6 mois (497 €)</strong> — Inclut l'offre Lancement + 6 séances visio de 45 minutes, bilans écrits, support prioritaire, 6 mois d'accès Discord.<br><br>
+        <strong>Canal Discord (12,99 €/mois)</strong> — Accès au canal privé éducatif, résiliable à tout moment sans frais ni engagement de durée.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 3 — Prix et modalités de paiement
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Les prix sont indiqués en euros. TVA non applicable — article 293 B du CGI (franchise en base de TVA).<br><br>
+        Le paiement est exigible intégralement au moment de la réservation, via la plateforme Stripe sécurisée. Aucune prestation ne débute avant réception du paiement.<br><br>
+        Le prestataire se réserve le droit de modifier ses tarifs à tout moment. Les prestations sont facturées au tarif en vigueur au moment de la commande. Une facture est émise et transmise au client après chaque paiement.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 4 — Droit de rétractation
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Conformément à l'article L.221-18 du Code de la consommation, le client dispose d'un délai de <strong>14 jours</strong> à compter de la date de la commande pour exercer son droit de rétractation, sans avoir à justifier de motifs ni supporter de pénalités.<br><br>
+        Pour exercer ce droit, le client doit notifier sa décision par email à <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b3c9d6c1dcc7dcc3d2c7c1dadedcdaddd6f3d4ded2dadf9dd0dcde">[email&#160;protected]</a> avant l'expiration du délai. Le remboursement intervient dans un délai de 14 jours suivant la réception de la demande.<br><br>
+        <strong>Exception :</strong> conformément à l'article L.221-28 du Code de la consommation, le droit de rétractation ne s'applique pas aux prestations de services pleinement exécutées avant l'expiration du délai de rétractation, dès lors que le client a expressément demandé l'exécution immédiate de la prestation et a renoncé par écrit à son droit de rétractation avant le début de celle-ci.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 5 — Modalités d'exécution — annulations et reports
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        <strong>Le prestataire s'engage à :</strong> dispenser les séances aux horaires convenus, fournir un contenu éducatif de qualité, remettre les documents prévus dans les délais annoncés. En cas d'empêchement, le prestataire prévient le client dans les meilleurs délais et propose une date de report sans frais supplémentaires.<br><br>
+        <strong>Le client s'engage à :</strong> participer aux séances aux horaires convenus. En cas d'absence non signalée 24h à l'avance, la séance est considérée comme effectuée et ne donne pas lieu à remboursement ni report. Un report est possible si le client prévient au moins 24h à l'avance.<br><br>
+        <strong>Propriété intellectuelle :</strong> les supports, outils et présentations partagés sont la propriété exclusive du prestataire. Toute reproduction, diffusion ou exploitation commerciale sans autorisation écrite préalable est interdite.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 6 — Responsabilité et clause de non-conseil
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Les prestations sont de nature exclusivement éducative. Le prestataire ne saurait être tenu responsable des décisions financières prises par le client à l'issue des séances, ni des pertes financières éventuellement subies.<br><br>
+        Tout investissement comporte un risque de perte en capital. Le client reconnaît expressément que les informations partagées ne constituent pas un conseil en investissement personnalisé au sens réglementaire, et qu'il reste seul responsable de ses décisions financières.<br><br>
+        La responsabilité du prestataire est en tout état de cause limitée au montant des sommes effectivement versées par le client au titre de la prestation concernée. Il est recommandé de consulter un conseiller en gestion de patrimoine agréé avant toute décision financière importante.
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 7 — Données personnelles et confidentialité
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        <strong>Responsable de traitement :</strong> Enzo Simon — <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d27382f3229322d3c292f3430323433381d3a303c3431733e3230">[email&#160;protected]</a>.<br><br>
+        Les données collectées (nom, email, informations financières partagées en séance) sont utilisées exclusivement dans le cadre de la prestation. Elles ne sont jamais transmises à des tiers à des fins commerciales.<br><br>
+        Les données sont conservées pendant une durée maximale de 3 ans à compter de la fin de la relation contractuelle, conformément aux obligations légales de conservation des données comptables.<br><br>
+        Conformément au RGPD (Règlement UE 2016/679) et à la loi Informatique et Libertés, le client dispose d'un droit d'accès, de rectification, d'effacement, de portabilité et d'opposition au traitement de ses données. Pour exercer ces droits : <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="027867706d766d726376706b6f6d6b6c6742656f636b6e2c616d6f">[email&#160;protected]</a>. Le client peut également introduire une réclamation auprès de la CNIL (www.cnil.fr).
+      </div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)">
+        Article 8 — Droit applicable et litiges
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-reponse">
+        Les présentes CGV sont soumises au droit français. En cas de litige, une solution amiable sera recherchée en priorité par contact à <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="09736c7b667d6679687d7b60646660676c496e64686065276a6664">[email&#160;protected]</a>.<br><br>
+        Conformément à l'article L.612-1 du Code de la consommation, le client consommateur peut recourir gratuitement à un médiateur de la consommation dans un délai d'un an à compter de sa réclamation écrite. Le prestataire adhère au service de médiation : <strong>CNPM Médiation Consommation</strong> — www.cnpm-mediation-consommation.eu.<br><br>
+        À défaut de résolution amiable, le litige sera soumis aux tribunaux compétents selon les règles de droit commun. Pour les litiges impliquant un consommateur, la juridiction compétente est celle du domicile du défendeur ou du lieu d'exécution de la prestation, conformément aux articles L.141-5 et R.631-3 du Code de la consommation.
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Zero <em>to</em> Patrimoine</div>
+      <div class="footer-legal">
+        Contenu éducatif uniquement — Ne constitue pas un conseil en investissement personnalisé.<br>
+        Non certifié AMF. Aucun statut de Conseiller en Investissements Financiers (CIF).<br>
+        Tout investissement comporte un risque de perte en capital.<br>
+        Consultez un professionnel agréé avant toute décision financière importante.<br>
+        © 2026 Zero to Patrimoine — @zerotopatrimoine
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(btn) {
+  var item = btn.parentElement;
+  item.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
